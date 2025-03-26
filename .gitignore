@@ -10,3 +10,5 @@
 .idea
 # uploads dir
 uploads/*
+
+/vendor/

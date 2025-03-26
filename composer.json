@@ -1,0 +1,17 @@
+{
+    "name": "admin/public",
+    "description": "Task-Force",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "taskforce\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Elistratov"
+        }
+    ],
+    "require": {}
+}
