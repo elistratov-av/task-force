@@ -2,6 +2,7 @@
 
 namespace taskforce\logic;
 
+use taskforce\exceptions\StatusActionException;
 use taskforce\logic\actions\CancelAction;
 use taskforce\logic\actions\CompleteAction;
 use taskforce\logic\actions\DenyAction;
@@ -28,6 +29,7 @@ class AvailableActions
      * @param string $status
      * @param int $clientId
      * @param int|null $performerId
+     * @throws StatusActionException
      */
     public function __construct(string $status, int $clientId, ?int $performerId = null)
     {
@@ -39,17 +41,28 @@ class AvailableActions
     /**
      * @param string $status
      * @return void
+     * @throws StatusActionException
      */
     private function setStatus(string $status): void
     {
         $availableStatus = [self::STATUS_NEW, self::STATUS_CANCEL, self::STATUS_IN_PROGRESS, self::STATUS_COMPLETE, self::STATUS_EXPIRED];
         if (in_array($status, $availableStatus)) {
-            $this->status = $status;
+            throw new StatusActionException("Неизвестный статус: $status");
         }
+        $this->status = $status;
     }
 
-    public function getAvailableActions(string $role, int $id)
+    /**
+     * Возвращает доступные действия для заданной роли и пользователя
+     * @param string $role
+     * @param int $id
+     * @return string[]
+     * @throws StatusActionException
+     */
+    public function getAvailableActions(string $role, int $id): array
     {
+        $this->checkRole($role);
+
         $statusActions = $this->statusAllowedActions($this->status);
         $roleActions = $this->roleAllowedActions($role);
 
@@ -92,6 +105,21 @@ class AvailableActions
         ];
 
         return $map[$action] ?? null;
+    }
+
+    /**
+     * Проверяет допустимость роли
+     * @param string $role
+     * @return void
+     * @throws StatusActionException
+     */
+    public function checkRole(string $role): void
+    {
+        $availableRoles = [self::ROLE_PERFORMER, self::ROLE_CLIENT];
+
+        if (!in_array($role, $availableRoles)) {
+            throw new StatusActionException("Неизвестная роль: $role");
+        }
     }
 
     /**

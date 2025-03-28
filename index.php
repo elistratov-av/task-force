@@ -1,12 +1,18 @@
 <?php
 require_once 'vendor/autoload.php';
 
+use taskforce\exceptions\StatusActionException;
 use taskforce\logic\actions\ResponseAction;
 use taskforce\logic\AvailableActions;
 
-$strategy = new AvailableActions(AvailableActions::STATUS_NEW, 1, 3);
-$nextStatus = $strategy->getNextStatus(ResponseAction::class);
-var_dump('next status new -> Response', $nextStatus); print(PHP_EOL);
+try {
+    $strategy = new AvailableActions(AvailableActions::STATUS_NEW, 1, 3);
+    $nextStatus = $strategy->getNextStatus(ResponseAction::class);
+    var_dump('next status new -> Response', $nextStatus);
+    print(PHP_EOL);
+} catch (StatusActionException $e) {
+    exit($e->getMessage());
+}
 
 var_dump('new -> performer', $strategy->getAvailableActions(AvailableActions::ROLE_PERFORMER, 2));
 var_dump('new -> client,alien', $strategy->getAvailableActions(AvailableActions::ROLE_CLIENT, 2));
