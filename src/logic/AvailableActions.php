@@ -46,7 +46,7 @@ class AvailableActions
     private function setStatus(string $status): void
     {
         $availableStatus = [self::STATUS_NEW, self::STATUS_CANCEL, self::STATUS_IN_PROGRESS, self::STATUS_COMPLETE, self::STATUS_EXPIRED];
-        if (in_array($status, $availableStatus)) {
+        if (!in_array($status, $availableStatus)) {
             throw new StatusActionException("Неизвестный статус: $status");
         }
         $this->status = $status;

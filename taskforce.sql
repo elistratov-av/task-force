@@ -51,6 +51,8 @@ DROP TABLE IF EXISTS `cities`;
 CREATE TABLE `cities` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
+  `lat` double NOT NULL,
+  `long` double NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

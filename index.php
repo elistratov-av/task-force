@@ -1,9 +1,18 @@
 <?php
 require_once 'vendor/autoload.php';
 
+use taskforce\converter\CsvSqlConverter;
+use taskforce\exceptions\ConverterException;
 use taskforce\exceptions\StatusActionException;
 use taskforce\logic\actions\ResponseAction;
 use taskforce\logic\AvailableActions;
+
+try {
+    $converter = new CsvSqlConverter('data\csv');
+    $converter->convertFiles('data\sql');
+} catch (ConverterException $e) {
+    exit($e->getMessage());
+}
 
 try {
     $strategy = new AvailableActions(AvailableActions::STATUS_NEW, 1, 3);
