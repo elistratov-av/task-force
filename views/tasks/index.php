@@ -1,13 +1,17 @@
 <?php
 /**
  * @var Task[] $models
- * @var $this View
+ * @var Task $task
+ * @var View $this
+ * @var Category[] $categories
  */
 
+use app\models\Category;
 use app\models\Task;
 use yii\helpers\BaseStringHelper;
 use yii\helpers\Html;
 use yii\web\View;
+use yii\widgets\ActiveForm;
 
 $this->title = 'Просмотр новых заданий';
 ?>
@@ -85,38 +89,35 @@ $this->title = 'Просмотр новых заданий';
 <div class="right-column">
     <div class="right-card black">
         <div class="search-form">
-            <form>
+            <?php $form = ActiveForm::begin(); ?>
                 <h4 class="head-card">Категории</h4>
                 <div class="form-group">
                     <div class="checkbox-wrapper">
-                        <label class="control-label" for="сourier-services">
-                            <input type="checkbox" id="сourier-services" checked>
-                            Курьерские услуги</label>
-                        <label class="control-label" for="cargo-transportation">
-                            <input id="cargo-transportation" type="checkbox">
-                            Грузоперевозки</label>
-                        <label class="control-label" for="translations">
-                            <input id="translations" type="checkbox">
-                            Переводы</label>
+                        <?= Html::activeCheckboxList($task, 'category_id', array_column($categories, 'name', 'id'),
+                        ['tag' => null, 'itemOptions' => ['labelOptions' => ['class' => 'control-label']]]) ?>
                     </div>
                 </div>
                 <h4 class="head-card">Дополнительно</h4>
                 <div class="form-group">
-                    <label class="control-label" for="without-performer">
+                    <!--<label class="control-label" for="without-performer">
                         <input id="without-performer" type="checkbox" checked>
-                        Без исполнителя</label>
+                        Без исполнителя</label>-->
+                    <?=$form->field($task, 'noPerformer')->checkbox(['labelOptions' => ['class' => 'control-label']]); ?>
                 </div>
                 <h4 class="head-card">Период</h4>
                 <div class="form-group">
-                    <label for="period-value"></label>
+                    <!--<label for="period-value"></label>
                     <select id="period-value">
                         <option>1 час</option>
                         <option>12 часов</option>
                         <option>24 часа</option>
-                    </select>
+                    </select>-->
+                    <?=$form->field($task, 'filterPeriod', ['template' => '{input}'])->dropDownList([
+                        '3600' => '1 час', '43200' => '12 часов', '86400' => '24 часа'
+                    ], ['prompt' => 'Выбрать']); ?>
                 </div>
                 <input type="submit" class="button button--blue" value="Искать">
-            </form>
+            <?php ActiveForm::end(); ?>
         </div>
     </div>
 </div>

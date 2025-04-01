@@ -2,14 +2,21 @@
 
 namespace app\controllers;
 
+use app\models\Category;
 use app\models\Task;
+use Yii;
 
 class TasksController extends \yii\web\Controller
 {
     public function actionIndex()
     {
-        $tasks = Task::findAll(['status_id' => 1]);
+        $task = new Task();
+        $task->load(Yii::$app->request->post());
 
-        return $this->render('index', ['models' => $tasks]);
+        $tasksQuery = $task->getSearchQuery();
+        $categories = Category::find()->all();
+        $tasks = $tasksQuery->all();
+
+        return $this->render('index', ['models' => $tasks, 'task' => $task, 'categories' => $categories]);
     }
 }

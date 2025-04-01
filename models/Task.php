@@ -26,6 +26,8 @@ use Yii;
  */
 class Task extends \yii\db\ActiveRecord
 {
+    public $noPerformer;
+    public $filterPeriod;
 
 
     /**
@@ -46,10 +48,12 @@ class Task extends \yii\db\ActiveRecord
             [['name', 'category_id', 'description', 'client_id', 'status_id'], 'required'],
             [['category_id', 'budget', 'client_id', 'performer_id', 'status_id'], 'integer'],
             [['description'], 'string'],
-            [['expire_dt', 'dt_add'], 'safe'],
+            [['name', 'category_id', 'description', 'client_id', 'status_id', 'expire_dt', 'dt_add', 'noPerformer', 'filterPeriod'], 'safe'],
             [['name', 'location'], 'string', 'max' => 255],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::class, 'targetAttribute' => ['category_id' => 'id']],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => Status::class, 'targetAttribute' => ['status_id' => 'id']],
+            [['noPerformer'], 'boolean'],
+            [['filterPeriod'], 'number'],
         ];
     }
 
@@ -60,17 +64,36 @@ class Task extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'category_id' => 'Category ID',
-            'description' => 'Description',
-            'location' => 'Location',
-            'budget' => 'Budget',
-            'expire_dt' => 'Expire Dt',
-            'dt_add' => 'Dt Add',
-            'client_id' => 'Client ID',
-            'performer_id' => 'Performer ID',
-            'status_id' => 'Status ID',
+            'name' => 'Название',
+            'category_id' => 'Категория',
+            'description' => 'Описание',
+            'location' => 'Место',
+            'budget' => 'Бюджет',
+            'expire_dt' => 'Крайний срок',
+            'dt_add' => 'Дата создания',
+            'client_id' => 'Заказчик',
+            'performer_id' => 'Исполнитель',
+            'status_id' => 'Статус',
+            'noPerformer' => 'Без исполнителя'
         ];
+    }
+
+    public function getSearchQuery()
+    {
+        $query = self::find();
+        $query->where(['status_id' => Status::STATUS_NEW]);
+
+        $query->andFilterWhere(['category_id' => $this->category_id]);
+
+        if ($this->noPerformer) {
+            $query->andWhere('performer_id IS NULL');
+        }
+
+        if ($this->filterPeriod) {
+            $query->andWhere('UNIX_TIMESTAMP(tasks.dt_add) > UNIX_TIMESTAMP() - :period', [':period' => $this->filterPeriod]);
+        }
+
+        return $query->orderBy('dt_add DESC');
     }
 
     /**
