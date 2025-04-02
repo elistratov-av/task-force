@@ -213,6 +213,7 @@ ALTER TABLE `users` ADD `fail_count` INT DEFAULT 0 NOT NULL;
 ALTER TABLE `users` ADD `phone` varchar(16) NULL;
 ALTER TABLE `users` ADD `tg` varchar(255) NULL;
 ALTER TABLE `users` ADD `hide_contacts` BOOL DEFAULT 0 NOT NULL;
+ALTER TABLE `users` ADD `is_contractor` BOOL DEFAULT 0 NOT NULL;
 
 -- ----------------------------
 -- Table structure for user_categories

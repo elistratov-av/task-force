@@ -23,6 +23,7 @@ use yii\web\IdentityInterface;
  * @property string $phone
  * @property string $tg
  * @property boolean $hide_contacts
+ * @property boolean $is_contractor
  *
  * @property City $city
  * @property File[] $files
@@ -49,15 +50,14 @@ class User extends BaseUser implements IdentityInterface
     public function rules()
     {
         return [
-            [['password_repeat', 'categories'/*, 'old_password', 'new_password', 'new_password_repeat'*/], 'safe'],
+            [['dt_add', 'last_activity', 'password_repeat', 'categories'/*, 'old_password', 'new_password', 'new_password_repeat'*/], 'safe'],
             [['email', 'name'], 'required'],
             [['city_id', 'password'], 'required', 'on' => 'insert'],
             [['password'], 'compare', 'on' => 'insert'],
-            [['hide_contacts'], 'boolean'],
+            [['is_contractor', 'hide_contacts'], 'boolean'],
             [['last_activity'], 'default', 'value' => null],
             [['blocked'], 'default', 'value' => 0],
             [['city_id', 'blocked'], 'integer'],
-            [['dt_add', 'last_activity'], 'safe'],
             [['bd_date'], 'date', 'format' => 'php:Y-m-d',],
             [['phone'], 'match', 'pattern' => '/^[+-]?\d{11}$/', 'message' => 'Номер телефона должен быть строкой в 11 символов'],
             [['phone'], 'number'],
@@ -88,12 +88,23 @@ class User extends BaseUser implements IdentityInterface
         return [
             'id' => 'ID',
             'email' => 'Email',
-            'name' => 'Name',
-            'city_id' => 'City ID',
-            'password' => 'Password',
+            'name' => 'Имя',
+            'city_id' => 'Город',
+            'password' => 'Пароль',
             'dt_add' => 'Dt Add',
             'blocked' => 'Blocked',
             'last_activity' => 'Last Activity',
+            'categories' => 'Выбранные категории',
+/*            'old_password' => 'Старый пароль',
+            'new_password' => 'Новый пароль',*/
+            'password_repeat' => 'Повтор пароля',
+//            'new_password_repeat' => 'Повтор пароля',
+            'hide_contacts' => 'Показывать контакты только заказчику',
+            'bd_date' => 'Дата рождения',
+            'phone' => 'Номер телефона',
+            'description' => 'Информация о себе',
+            'tg' => 'Telegram',
+            'is_contractor' => 'я собираюсь откликаться на заказы'
         ];
     }
 
