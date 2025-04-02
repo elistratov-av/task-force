@@ -34,7 +34,7 @@ $this->title = 'Просмотр новых заданий';
         </div>
     </div>
     <?php endforeach; ?>
-    <div class="task-card">
+    <!--<div class="task-card">
         <div class="header-task">
             <a  href="#" class="link link--block link--big">Убраться в квартире после вписки</a>
             <p class="price price--task">4700 ₽</p>
@@ -65,7 +65,7 @@ $this->title = 'Просмотр новых заданий';
             <p class="info-text category-text">Переводы</p>
             <a href="#" class="button button--black">Смотреть Задание</a>
         </div>
-    </div>
+    </div>-->
     <div class="pagination-wrapper">
         <ul class="pagination-list">
             <li class="pagination-item mark">

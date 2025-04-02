@@ -3,13 +3,12 @@
 namespace app\controllers;
 
 use app\models\Category;
-use app\models\Opinion;
-use app\models\Reply;
 use app\models\Task;
+use app\models\User;
 use Yii;
 use yii\web\NotFoundHttpException;
 
-class TasksController extends \yii\web\Controller
+class UserController extends \yii\web\Controller
 {
     public function actionIndex()
     {
@@ -28,13 +27,11 @@ class TasksController extends \yii\web\Controller
      */
     public function actionView($id): string
     {
-        $task = Task::findOne($id);
-        if (!$task) {
-            throw new NotFoundHttpException("Задача #$id не найдена.");
+        $user = User::findOne($id);
+        if (!$user) {
+            throw new NotFoundHttpException("Пользователь #$id не найден.");
         }
-        $reply = new Reply;
-        $opinion = new Opinion;
 
-        return $this->render('view', ['model' => $task, 'newReply' => $reply, 'opinion' => $opinion]);
+        return $this->render('view', ['model' => $user]);
     }
 }

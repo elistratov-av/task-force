@@ -10,6 +10,7 @@ use Yii;
  * @property int $id
  * @property int $owner_id
  * @property int $performer_id
+ * @property int $task_id
  * @property int $rate
  * @property string $description
  * @property string|null $dt_add
@@ -41,6 +42,7 @@ class Opinion extends \yii\db\ActiveRecord
             [['dt_add'], 'safe'],
             [['owner_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['owner_id' => 'id']],
             [['performer_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['performer_id' => 'id']],
+            [['task_id'], 'exist', 'skipOnError' => true, 'targetClass' => Task::class, 'targetAttribute' => ['task_id' => 'id']],
         ];
     }
 
@@ -77,6 +79,16 @@ class Opinion extends \yii\db\ActiveRecord
     public function getPerformer()
     {
         return $this->hasOne(User::class, ['id' => 'performer_id']);
+    }
+
+    /**
+     * Gets query for [[Task]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTask()
+    {
+        return $this->hasOne(Task::class, ['id' => 'task_id']);
     }
 
 }

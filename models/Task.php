@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\web\IdentityInterface;
 
 /**
  * This is the model class for table "tasks".
@@ -107,6 +108,26 @@ class Task extends \yii\db\ActiveRecord
     }
 
     /**
+     * Gets query for [[Performer]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPerformer()
+    {
+        return $this->hasOne(User::class, ['id' => 'performer_id']);
+    }
+
+    /**
+     * Gets query for [[Client]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getClient()
+    {
+        return $this->hasOne(User::class, ['id' => 'client_id']);
+    }
+
+    /**
      * Gets query for [[Files]].
      *
      * @return \yii\db\ActiveQuery
@@ -121,9 +142,15 @@ class Task extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getReplies()
+    public function getReplies(IdentityInterface $user = null)
     {
-        return $this->hasMany(Reply::class, ['task_id' => 'id']);
+        $allRepliesQuery = $this->hasMany(Reply::class, ['task_id' => 'id']);
+
+        if ($user && $user->getId() !== $this->client_id) {
+            $allRepliesQuery->where(['replies.user_id' => $user->getId()]);
+        }
+
+        return $allRepliesQuery;
     }
 
     /**

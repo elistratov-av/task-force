@@ -132,6 +132,9 @@ CREATE TABLE `opinions` (
   CONSTRAINT `fk_opinions_users_2` FOREIGN KEY (`performer_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+ALTER TABLE `opinions` ADD `task_id` INT UNSIGNED NOT NULL;
+ALTER TABLE `opinions` ADD CONSTRAINT `fk_opinions_tasks` FOREIGN KEY (id) REFERENCES `tasks`(id);
+
 -- ----------------------------
 -- Table structure for replies
 -- ----------------------------
@@ -203,6 +206,14 @@ CREATE TABLE `users` (
   CONSTRAINT `fk_users_cities_1` FOREIGN KEY (`city_id`) REFERENCES `cities` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+ALTER TABLE `users` ADD `avatar` varchar(255) NULL;
+ALTER TABLE `users` ADD `bd_date` DATETIME NULL;
+ALTER TABLE `users` ADD `description` varchar(255) NULL;
+ALTER TABLE `users` ADD `fail_count` INT DEFAULT 0 NOT NULL;
+ALTER TABLE `users` ADD `phone` varchar(16) NULL;
+ALTER TABLE `users` ADD `tg` varchar(255) NULL;
+ALTER TABLE `users` ADD `hide_contacts` BOOL DEFAULT 0 NOT NULL;
+
 -- ----------------------------
 -- Table structure for user_categories
 -- ----------------------------
@@ -243,4 +254,8 @@ CREATE TABLE `user_settings` (
   UNIQUE KEY `phone` (`phone`,`skype`,`messenger`),
   CONSTRAINT `fk_user_settings_users_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+ALTER TABLE `tasks` ADD CONSTRAINT `fk_tasks_clients` FOREIGN KEY (client_id) REFERENCES `users`(id);
+ALTER TABLE `tasks` ADD CONSTRAINT `fk_tasks_performers` FOREIGN KEY (performer_id) REFERENCES `users`(id);
+
 SET FOREIGN_KEY_CHECKS=1;
