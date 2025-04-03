@@ -14,26 +14,16 @@ $this->title = 'Регистрация пользователя';
     <div class="registration-form regular-form">
         <?php $form = ActiveForm::begin() ?>
         <h3 class="head-main head-task">Регистрация нового пользователя</h3>
-        <div class="form-group">
-            <?= $form->field($model, 'name') ?>
+        <?= $form->field($model, 'name') ?>
+        <div class="half-wrapper">
+            <?= $form->field($model, 'email') ?>
+            <?= $form->field($model, 'city_id')->dropDownList(array_column($cities, 'name', 'id')) ?>
         </div>
         <div class="half-wrapper">
-            <div class="form-group">
-                <?= $form->field($model, 'email') ?>
-            </div>
-            <div class="form-group">
-                <?= $form->field($model, 'city_id')->dropDownList(array_column($cities, 'name', 'id')) ?>
-            </div>
+            <?= $form->field($model, 'password')->passwordInput() ?>
         </div>
         <div class="half-wrapper">
-            <div class="form-group">
-                <?= $form->field($model, 'password')->passwordInput() ?>
-            </div>
-        </div>
-        <div class="half-wrapper">
-            <div class="form-group">
-                <?= $form->field($model, 'password_repeat')->passwordInput() ?>
-            </div>
+            <?= $form->field($model, 'password_repeat')->passwordInput() ?>
         </div>
         <?= $form->field($model, 'is_contractor')
             ->checkbox(['labelOptions' => ['class' => 'control-label checkbox-label']]) ?>

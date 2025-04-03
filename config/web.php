@@ -25,6 +25,7 @@ $config = [
         'user' => [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,
+            'loginUrl' => ['site/index']
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -49,9 +50,6 @@ $config = [
                 ],
             ],
         ],
-        /*'inflection' => [
-            'class' => 'wapmorgan\yii2inflection\Inflection'
-        ],*/
         'mailer' => [
             'class' => \yii\symfonymailer\Mailer::class,
             'viewPath' => '@app/mail',

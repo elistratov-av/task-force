@@ -8,7 +8,7 @@ use app\models\User;
 use Yii;
 use yii\web\NotFoundHttpException;
 
-class UserController extends \yii\web\Controller
+class UserController extends SecuredController
 {
     public function actionIndex()
     {

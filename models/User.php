@@ -117,7 +117,7 @@ class User extends BaseUser implements IdentityInterface
     {
         $result = true;
 
-        if (true/*$this->hide_contacts*/) {
+        if ($this->hide_contacts) {
             $result = $this->getAssignedTasks($user)->exists();
         }
 
@@ -132,7 +132,7 @@ class User extends BaseUser implements IdentityInterface
 
         if ($opinionsCount) {
             $ratingSum = $this->getOpinions()->sum('rate');
-            $failCount = 0;//$this->fail_count;
+            $failCount = $this->fail_count;
             $rating = round(intdiv($ratingSum, $opinionsCount + $failCount), 2);
         }
 
