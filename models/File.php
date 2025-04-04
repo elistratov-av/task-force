@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\BlameableBehavior;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "files".
@@ -19,7 +21,10 @@ use Yii;
  */
 class File extends \yii\db\ActiveRecord
 {
-
+    /**
+     * @var UploadedFile
+     */
+    public $file;
 
     /**
      * {@inheritdoc}
@@ -29,19 +34,30 @@ class File extends \yii\db\ActiveRecord
         return 'files';
     }
 
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => BlameableBehavior::class,
+                'createdByAttribute' => 'user_id',
+                'updatedByAttribute' => null
+            ]
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['name', 'path', 'task_id', 'user_id'], 'required'],
-            [['task_id', 'user_id'], 'integer'],
-            [['dt_add'], 'safe'],
+            [['name', 'path', 'task_uid'], 'required'],
+            [['task_id'], 'integer'],
+            [['name', 'path', 'task_id', 'task_uid', 'dt_add'], 'safe'],
             [['name', 'path'], 'string', 'max' => 255],
             [['path'], 'unique'],
             [['task_id'], 'exist', 'skipOnError' => true, 'targetClass' => Task::class, 'targetAttribute' => ['task_id' => 'id']],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
+            [['file'], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg, jpeg'],
         ];
     }
 
@@ -58,6 +74,30 @@ class File extends \yii\db\ActiveRecord
             'user_id' => 'User ID',
             'dt_add' => 'Dt Add',
         ];
+    }
+
+    public function upload()
+    {
+        $this->name = $this->file->name;
+        $newname = uniqid() . '.' . $this->file->getExtension();
+        $this->path = '/uploads/' . $newname;
+        $this->size = $this->file->size;
+
+        if ($this->save()) {
+            return $this->file->saveAs('@webroot/uploads/' . $newname);
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets query for [[Task]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTaskByUid()
+    {
+        return $this->hasOne(Task::class, ['uid' => 'task_uid']);
     }
 
     /**

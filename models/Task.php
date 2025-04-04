@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\BlameableBehavior;
 use yii\web\IdentityInterface;
 
 /**
@@ -39,6 +40,17 @@ class Task extends \yii\db\ActiveRecord
         return 'tasks';
     }
 
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => BlameableBehavior::class,
+                'createdByAttribute' => 'client_id',
+                'updatedByAttribute' => null
+            ]
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -46,15 +58,28 @@ class Task extends \yii\db\ActiveRecord
     {
         return [
             [['location', 'budget', 'expire_dt', 'performer_id'], 'default', 'value' => null],
-            [['name', 'category_id', 'description', 'client_id', 'status_id'], 'required'],
-            [['category_id', 'budget', 'client_id', 'performer_id', 'status_id'], 'integer'],
+            [['status_id'], 'default', 'value' => function($model, $attr) {
+                return Status::find()->select('id')->where('id=1')->scalar();
+            }],
+/*            [['city_id'], 'default', 'value' => function($model, $attr) {
+                if ($model->location) {
+                    return \Yii::$app->user->getIdentity()->city_id;
+                }
+
+                return null;
+            }],*/
+            [['category_id', 'budget', 'performer_id', 'status_id'], 'integer'],
             [['description'], 'string'],
-            [['name', 'category_id', 'description', 'client_id', 'status_id', 'expire_dt', 'dt_add', 'noPerformer', 'filterPeriod'], 'safe'],
+            [['name', 'category_id', 'description', 'status_id', 'expire_dt', 'dt_add', 'noPerformer', 'filterPeriod'], 'safe'],
             [['name', 'location'], 'string', 'max' => 255],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::class, 'targetAttribute' => ['category_id' => 'id']],
             [['status_id'], 'exist', 'skipOnError' => true, 'targetClass' => Status::class, 'targetAttribute' => ['status_id' => 'id']],
             [['noPerformer'], 'boolean'],
             [['filterPeriod'], 'number'],
+
+            [['budget'], 'integer', 'min' => 1],
+            [['expire_dt'], 'date', 'format' => 'php:Y-m-d', 'min' => date('Y-m-d'), 'minString' => 'чем текущий день'],
+            [['name', 'category_id', 'description', 'status_id'], 'required'],
         ];
     }
 

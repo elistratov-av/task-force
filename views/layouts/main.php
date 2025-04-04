@@ -10,19 +10,19 @@ use yii\widgets\Menu;
 
 AppAsset::register($this);
 ?>
-<?php $this->beginPage() ?>
+<?php $this->beginPage(); ?>
     <!DOCTYPE html>
     <html lang="<?= Yii::$app->language ?>">
     <head>
         <meta charset="<?= Yii::$app->charset ?>">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <?php $this->registerCsrfMetaTags() ?>
+        <?php $this->registerCsrfMetaTags(); ?>
         <title><?= Html::encode($this->title) ?></title>
-        <?php $this->head() ?>
+        <?php $this->head(); ?>
     </head>
     <body>
-    <?php $this->beginBody() ?>
+    <?php $this->beginBody(); ?>
 
     <header class="page-header">
         <nav class="main-nav">
@@ -84,10 +84,10 @@ AppAsset::register($this);
         </div>
         <?php endif; ?>
     </header>
-    <main class="main-content container">
-        <?=$content; ?>
+    <main class="main-content container <?= $this->params['main_class'] ?? '' ?>">
+        <?= $content ?>
     </main>
-    <?php $this->endBody() ?>
+    <?php $this->endBody(); ?>
     </body>
     </html>
-<?php $this->endPage() ?>
+<?php $this->endPage(); ?>
