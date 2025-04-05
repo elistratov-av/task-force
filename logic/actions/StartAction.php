@@ -1,21 +1,21 @@
 <?php
 
-namespace taskforce\logic\actions;
+namespace app\logic\actions;
 
-class DenyAction extends AbstractAction
+class StartAction extends AbstractAction
 {
     public static function getLabel()
     {
-        return "Отказаться";
+        return "Принять";
     }
 
     public static function getInternalName()
     {
-        return "act_deny";
+        return 'act_start';
     }
 
     public static function checkRights($userId, $performerId, $clientId)
     {
-        return $userId == $performerId;
+        return $userId == $clientId;
     }
 }

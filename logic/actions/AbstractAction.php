@@ -1,6 +1,6 @@
 <?php
 
-namespace taskforce\logic\actions;
+namespace app\logic\actions;
 
 abstract class AbstractAction
 {

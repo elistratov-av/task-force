@@ -10,6 +10,7 @@ use app\models\Category;
 use app\models\Task;
 use yii\helpers\BaseStringHelper;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\web\View;
 use yii\widgets\ActiveForm;
 
@@ -20,7 +21,7 @@ $this->title = 'Просмотр новых заданий';
     <?php foreach ($models as $model): ?>
     <div class="task-card">
         <div class="header-task">
-            <a  href="#" class="link link--block link--big"><?= Html::encode($model->name) ?></a>
+            <a  href="<?= Url::toRoute(['tasks/view', 'id' => $model->id]) ?>" class="link link--block link--big"><?= Html::encode($model->name) ?></a>
             <p class="price price--task"><?= $model->budget ?></p>
         </div>
         <p class="info-text"><?= Yii::$app->formatter->asRelativeTime($model->dt_add) ?></p>
@@ -30,7 +31,7 @@ $this->title = 'Просмотр новых заданий';
             <p class="info-text town-text"><?= $model->location ?></p>
             <?php endif; ?>
             <p class="info-text category-text"><?= $model->category->name ?></p>
-            <a href="#" class="button button--black">Смотреть Задание</a>
+            <a href="<?= Url::toRoute(['tasks/view', 'id' => $model->id]) ?>" class="button button--black">Смотреть Задание</a>
         </div>
     </div>
     <?php endforeach; ?>

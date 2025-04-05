@@ -15,6 +15,8 @@ use yii\web\UploadedFile;
  * @property int $task_id
  * @property int $user_id
  * @property string $dt_add
+ * @property string $uid
+ * @property integer $size
  *
  * @property Task $task
  * @property User $user

@@ -1,21 +1,21 @@
 <?php
 
-namespace taskforce\logic\actions;
+namespace app\logic\actions;
 
-class ResponseAction extends AbstractAction
+class CompleteAction extends AbstractAction
 {
     public static function getLabel()
     {
-        return "Откликнуться";
+        return "Завершить";
     }
 
     public static function getInternalName()
     {
-        return 'act_response';
+        return "act_complete";
     }
 
     public static function checkRights($userId, $performerId, $clientId)
     {
-        return $userId !== $performerId;
+        return $userId == $clientId;
     }
 }

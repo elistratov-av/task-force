@@ -1,11 +1,11 @@
 <?php
 require_once 'vendor/autoload.php';
 
-use taskforce\converter\CsvSqlConverter;
-use taskforce\exceptions\ConverterException;
-use taskforce\exceptions\StatusActionException;
-use taskforce\logic\actions\ResponseAction;
-use taskforce\logic\AvailableActions;
+use app\converter\CsvSqlConverter;
+use app\exceptions\ConverterException;
+use app\exceptions\StatusActionException;
+use app\logic\actions\ResponseAction;
+use app\logic\AvailableActions;
 
 try {
     $converter = new CsvSqlConverter('data\csv');

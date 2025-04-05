@@ -4,12 +4,12 @@ namespace app\helpers;
 
 use app\models\Task;
 use app\models\User;
-use taskforce\exceptions\StatusActionException;
-use taskforce\logic\actions\CancelAction;
-use taskforce\logic\actions\CompleteAction;
-use taskforce\logic\actions\DenyAction;
-use taskforce\logic\actions\ResponseAction;
-use taskforce\logic\AvailableActions;
+use app\exceptions\StatusActionException;
+use app\logic\actions\CancelAction;
+use app\logic\actions\CompleteAction;
+use app\logic\actions\DenyAction;
+use app\logic\actions\ResponseAction;
+use app\logic\AvailableActions;
 use yii\helpers\Html;
 use yii\helpers\Url;
 
@@ -50,7 +50,7 @@ class UIHelper
         $roleName = $user->is_contractor ? AvailableActions::ROLE_PERFORMER : AvailableActions::ROLE_CLIENT;
 
         try {
-            $availableActionsManger = new AvailableActions($task->status->slug, $task->performer_id, $task->client_id);
+            $availableActionsManger = new AvailableActions($task->status->slug, $task->client_id, $task->performer_id);
             $actions = $availableActionsManger->getAvailableActions($roleName, $user->id);
 
             foreach ($actions as $action) {

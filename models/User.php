@@ -242,4 +242,8 @@ class User extends BaseUser implements IdentityInterface
         return $this->hasOne(UserSettings::class, ['user_id' => 'id']);
     }
 
+    public function increaseFailCount()
+    {
+        $this->updateCounters(['fail_count' => 1]);
+    }
 }

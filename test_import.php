@@ -1,7 +1,7 @@
 <?php
 
-use taskforce\converter\CsvSqlConverter;
-use taskforce\exceptions\ConverterException;
+use app\converter\CsvSqlConverter;
+use app\exceptions\ConverterException;
 
 require_once 'vendor/autoload.php';
 

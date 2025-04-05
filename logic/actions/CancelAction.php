@@ -1,17 +1,17 @@
 <?php
 
-namespace taskforce\logic\actions;
+namespace app\logic\actions;
 
-class CompleteAction extends AbstractAction
+class CancelAction extends AbstractAction
 {
     public static function getLabel()
     {
-        return "Завершить";
+        return "Отменить";
     }
 
     public static function getInternalName()
     {
-        return "act_complete";
+        return "act_cancel";
     }
 
     public static function checkRights($userId, $performerId, $clientId)

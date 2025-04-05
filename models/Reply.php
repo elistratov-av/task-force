@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\BlameableBehavior;
 
 /**
  * This is the model class for table "replies".
@@ -11,8 +12,10 @@ use Yii;
  * @property int $user_id
  * @property string $dt_add
  * @property string $description
+ * @property int $budget
  * @property int $task_id
  * @property int|null $is_approved
+ * @property int|null $is_denied
  *
  * @property Task $task
  * @property User $user
@@ -29,6 +32,17 @@ class Reply extends \yii\db\ActiveRecord
         return 'replies';
     }
 
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => BlameableBehavior::class,
+                'createdByAttribute' => 'user_id',
+                'updatedByAttribute' => null
+            ]
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -36,12 +50,13 @@ class Reply extends \yii\db\ActiveRecord
     {
         return [
             [['is_approved'], 'default', 'value' => 0],
-            [['user_id', 'description', 'task_id'], 'required'],
-            [['user_id', 'task_id', 'is_approved'], 'integer'],
+            [['description', 'budget'], 'required'],
+            [['budget'], 'integer', 'min' => 1],
+            [['task_id', 'is_approved'], 'integer'],
             [['dt_add'], 'safe'],
             [['description'], 'string', 'max' => 255],
+            [['description'], 'unique', 'targetAttribute' => ['task_id', 'user_id'], 'message' => 'Вы уже оставляли отклик к этому заданию'],
             [['task_id'], 'exist', 'skipOnError' => true, 'targetClass' => Task::class, 'targetAttribute' => ['task_id' => 'id']],
-            [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];
     }
 
@@ -54,10 +69,16 @@ class Reply extends \yii\db\ActiveRecord
             'id' => 'ID',
             'user_id' => 'User ID',
             'dt_add' => 'Dt Add',
-            'description' => 'Description',
+            'description' => 'Комментариий',
+            'budget' => 'Стоимость',
             'task_id' => 'Task ID',
             'is_approved' => 'Is Approved',
         ];
+    }
+
+    public function getIsHolded()
+    {
+        return $this->is_denied || $this->is_approved || $this->task->status_id == Status::STATUS_IN_PROGRESS;
     }
 
     /**

@@ -1,13 +1,14 @@
 <?php
 
-namespace taskforce\logic;
+namespace app\logic;
 
-use taskforce\exceptions\StatusActionException;
-use taskforce\logic\actions\CancelAction;
-use taskforce\logic\actions\CompleteAction;
-use taskforce\logic\actions\DenyAction;
-use taskforce\logic\actions\ResponseAction;
-use taskforce\logic\actions\StartAction;
+use app\exceptions\StatusActionException;
+use app\logic\actions\AbstractAction;
+use app\logic\actions\CancelAction;
+use app\logic\actions\CompleteAction;
+use app\logic\actions\DenyAction;
+use app\logic\actions\ResponseAction;
+use app\logic\actions\StartAction;
 
 class AvailableActions
 {
@@ -92,10 +93,10 @@ class AvailableActions
 
     /**
      * Возвращает статус, в которой перейдёт после выполнения указанного действия
-     * @param string $action
+     * @param AbstractAction $action
      * @return string|null
      */
-    public function getNextStatus(string $action): ?string
+    public function getNextStatus(AbstractAction $action): ?string
     {
         $map = [
             CompleteAction::class => self::STATUS_COMPLETE,
@@ -104,7 +105,7 @@ class AvailableActions
             StartAction::class => self::STATUS_IN_PROGRESS,
         ];
 
-        return $map[$action] ?? null;
+        return $map[get_class($action)] ?? null;
     }
 
     /**

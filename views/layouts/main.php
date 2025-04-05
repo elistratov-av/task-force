@@ -63,10 +63,10 @@ AppAsset::register($this);
             <?php $user = Yii::$app->user->identity; ?>
         <div class="user-block">
             <a href="#">
-                <img class="user-photo" src="/img/man-glasses.png" width="55" height="55" alt="Аватар">
+                <img class="user-photo" src="<?= $user->avatar ?>" width="55" height="55" alt="Аватар">
             </a>
             <div class="user-menu">
-                <p class="user-name">Василий</p>
+                <p class="user-name"><?= $user->name ?></p>
                 <div class="popup-head">
                     <ul class="popup-menu">
                         <li class="menu-item">
@@ -87,6 +87,7 @@ AppAsset::register($this);
     <main class="main-content container <?= $this->params['main_class'] ?? '' ?>">
         <?= $content ?>
     </main>
+    <div class="overlay"></div>
     <?php $this->endBody(); ?>
     </body>
     </html>

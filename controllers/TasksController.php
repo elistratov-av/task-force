@@ -7,6 +7,8 @@ use app\models\File;
 use app\models\Opinion;
 use app\models\Reply;
 use app\models\Task;
+use app\logic\actions\CancelAction;
+use app\logic\actions\DenyAction;
 use Yii;
 use yii\web\NotFoundHttpException;
 use Yii\web\Response;
@@ -88,5 +90,30 @@ class TasksController extends SecuredController
             $res .= ">> " . implode(" || ", $errs) . "\n";
         }
         return $res;
+    }
+
+    public function actionCancel($id)
+    {
+        /**
+         * @var Task $task
+         */
+        $task = $this->findOrDie($id, Task::class);
+        $task->goToNextStatus(new CancelAction);
+
+        return $this->redirect(['tasks/view', 'id' => $task->id]);
+    }
+
+    public function actionDeny($id)
+    {
+        /**
+         * @var Task $task
+         */
+        $task = $this->findOrDie($id, Task::class);
+        $task->goToNextStatus(new DenyAction());
+
+        $performer = $task->performer;
+        $performer->increaseFailCount();
+
+        return $this->redirect(['tasks/view', 'id' => $task->id]);
     }
 }

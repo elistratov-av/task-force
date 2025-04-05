@@ -2,7 +2,8 @@
 
 namespace app\models;
 
-use Yii;
+use app\logic\actions\AbstractAction;
+use app\logic\AvailableActions;
 use yii\behaviors\BlameableBehavior;
 use yii\web\IdentityInterface;
 
@@ -186,6 +187,16 @@ class Task extends \yii\db\ActiveRecord
     public function getStatus()
     {
         return $this->hasOne(Status::class, ['id' => 'status_id']);
+    }
+
+    public function goToNextStatus(AbstractAction $action)
+    {
+        $actionManager = new AvailableActions($this->status->slug, $this->client_id, $this->performer_id);
+        $nextStatusName = $actionManager->getNextStatus($action);
+
+        $status = Status::findOne(['slug' => $nextStatusName]);
+        $this->link('status', $status);
+        $this->save();
     }
 
 }
