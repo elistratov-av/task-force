@@ -3,6 +3,7 @@
  * @var Task $model
  */
 
+use app\assets\YandexAsset;
 use app\helpers\UIHelper;
 use app\models\Opinion;
 use app\models\Reply;
@@ -10,6 +11,7 @@ use app\models\Task;
 use app\models\User;
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\web\View;
 use yii\widgets\ActiveForm;
 
 $this->title = 'Просмотр задания';
@@ -22,6 +24,8 @@ $this->title = 'Просмотр задания';
  */
 $user = Yii::$app->user->getIdentity();
 $this->registerJsFile('/js/main.js');
+
+YandexAsset::register($this);
 ?>
 <div class="left-column">
     <div class="head-wrapper">
@@ -36,11 +40,35 @@ $this->registerJsFile('/js/main.js');
     <!--<a href="#" class="button button--blue action-btn" data-action="act_response">Откликнуться на задание</a>
     <a href="#" class="button button--orange action-btn" data-action="refusal">Отказаться от задания</a>
     <a href="#" class="button button--pink action-btn" data-action="completion">Завершить задание</a>-->
+
+    <?php if ($model->city): ?>
     <div class="task-map">
-        <img class="map" src="/img/map.png"  width="725" height="346" alt="Новый арбат, 23, к. 1">
-        <p class="map-address town">Москва</p>
-        <p class="map-address">Новый арбат, 23, к. 1</p>
+        <!--img class="map" id="map" src="/img/map.png"  width="725" height="346" alt="Новый арбат, 23, к. 1"-->
+        <div id="map" style="width: 725px; height: 346px"></div>
+        <p class="map-address town"><?= $model->city->name ?></p>
+        <p class="map-address"><?= Html::encode($model->location) ?></p>
     </div>
+    <?php
+    $lat = $model->lat; $long = $model->long;
+    $this->registerJs(<<<JS
+    ymaps.ready(init);
+    function init(){
+        var myMap = new ymaps.Map("map", {
+            center: ["$lat", "$long"],
+            zoom: 16
+        });
+        
+        myMap.controls.remove('trafficControl');
+        myMap.controls.remove('searchControl');
+        myMap.controls.remove('geolocationControl');
+        myMap.controls.remove('typeSelector');
+        myMap.controls.remove('fullscreenControl');
+        myMap.controls.remove('rulerControl');
+    }
+JS, View::POS_READY);
+    ?>
+    <?php endif; ?>
+
     <h4 class="head-regular">Отклики на задание</h4>
     <?php foreach ($model->getReplies($user)->all() as $reply): ?>
     <div class="response-card">

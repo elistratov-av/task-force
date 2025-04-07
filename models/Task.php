@@ -2,8 +2,10 @@
 
 namespace app\models;
 
+use app\helpers\YandexMapHelper;
 use app\logic\actions\AbstractAction;
 use app\logic\AvailableActions;
+use Yii;
 use yii\behaviors\BlameableBehavior;
 use yii\web\IdentityInterface;
 
@@ -21,11 +23,15 @@ use yii\web\IdentityInterface;
  * @property int $client_id
  * @property int|null $performer_id
  * @property int $status_id
+ * @property int $city_id
+ * @property float $lat
+ * @property float $long
  *
  * @property Category $category
  * @property File[] $files
  * @property Reply[] $replies
  * @property Status $status
+ * @property City $city
  */
 class Task extends \yii\db\ActiveRecord
 {
@@ -62,14 +68,14 @@ class Task extends \yii\db\ActiveRecord
             [['status_id'], 'default', 'value' => function($model, $attr) {
                 return Status::find()->select('id')->where('id=1')->scalar();
             }],
-/*            [['city_id'], 'default', 'value' => function($model, $attr) {
+            [['city_id'], 'default', 'value' => function($model, $attr) {
                 if ($model->location) {
-                    return \Yii::$app->user->getIdentity()->city_id;
+                    return Yii::$app->user->getIdentity()->city_id;
                 }
 
                 return null;
-            }],*/
-            [['category_id', 'budget', 'performer_id', 'status_id'], 'integer'],
+            }],
+            [['category_id', 'budget', 'performer_id', 'status_id', 'city_id'], 'integer'],
             [['description'], 'string'],
             [['name', 'category_id', 'description', 'status_id', 'expire_dt', 'dt_add', 'noPerformer', 'filterPeriod'], 'safe'],
             [['name', 'location'], 'string', 'max' => 255],
@@ -189,6 +195,11 @@ class Task extends \yii\db\ActiveRecord
         return $this->hasOne(Status::class, ['id' => 'status_id']);
     }
 
+    public function getCity()
+    {
+        return $this->hasOne(City::class, ['id' => 'city_id']);
+    }
+
     public function goToNextStatus(AbstractAction $action)
     {
         $actionManager = new AvailableActions($this->status->slug, $this->client_id, $this->performer_id);
@@ -197,6 +208,25 @@ class Task extends \yii\db\ActiveRecord
         $status = Status::findOne(['slug' => $nextStatusName]);
         $this->link('status', $status);
         $this->save();
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($this->location) {
+            $yandexHelper = new YandexMapHelper(getenv('YANDEX_API_KEY'));
+            $coords = $yandexHelper->getCoordinates($this->city->name, $this->location);
+
+            if ($coords) {
+                [$lat, $long] = $coords;
+
+                $this->lat = $lat;
+                $this->long = $long;
+            }
+        }
+
+        parent::beforeSave($insert);
+
+        return true;
     }
 
 }
