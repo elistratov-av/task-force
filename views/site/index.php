@@ -4,6 +4,7 @@
 /* @var $model LoginForm01 */
 
 use app\models\LoginForm01;
+use yii\authclient\widgets\AuthChoice;
 use yii\widgets\ActiveForm;
 ?>
 <section class="modal enter-form form-modal" id="enter-form">
@@ -17,5 +18,10 @@ use yii\widgets\ActiveForm;
 
         <button class="button" type="submit">Войти</button>
     <?php ActiveForm::end(); ?>
+
+    <?= AuthChoice::widget([
+        'baseAuthUrl' => ['auth/vk'],
+        'popupMode' => false,
+    ]); ?>
     <button class="form-modal-close" type="button">Закрыть</button>
 </section>
