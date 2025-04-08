@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use Yii;
 use yii\web\IdentityInterface;
 
@@ -36,6 +37,15 @@ class User extends BaseUser implements IdentityInterface
 {
     public $password_repeat;
 
+    public $old_password;
+    public $new_password;
+    public $new_password_repeat;
+
+    /**
+     * @var UploadedFile
+     */
+    public $avatarFile;
+
     /**
      * {@inheritdoc}
      */
@@ -44,13 +54,25 @@ class User extends BaseUser implements IdentityInterface
         return 'users';
     }
 
+    public function behaviors()
+    {
+        return [
+            'saveRelations' => [
+                'class'     => SaveRelationsBehavior::class,
+                'relations' => [
+                    'categories'
+                ],
+            ],
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['dt_add', 'last_activity', 'password_repeat', 'categories'/*, 'old_password', 'new_password', 'new_password_repeat'*/], 'safe'],
+            [['dt_add', 'last_activity', 'password_repeat', 'categories', 'old_password', 'new_password', 'new_password_repeat'], 'safe'],
             [['email', 'name'], 'required'],
             [['city_id', 'password'], 'required', 'on' => 'insert'],
             [['password'], 'compare', 'on' => 'insert'],
@@ -67,17 +89,13 @@ class User extends BaseUser implements IdentityInterface
             [['email'], 'unique'],
             [['description'], 'string'],
             [['city_id'], 'exist', 'skipOnError' => true, 'targetClass' => City::class, 'targetAttribute' => ['city_id' => 'id']],
-        ];
-
-/*        return [
             [['new_password'], 'required', 'when' => function ($model) {
                 return $model->old_password;
             }],
             [['avatarFile'], 'file', 'mimeTypes' => ['image/jpeg', 'image/png'], 'extensions' => ['png', 'jpg', 'jpeg']],
             [['new_password'], 'compare', 'on' => 'update'],
-            [['is_contractor', 'hide_contacts'], 'boolean'],
             ['old_password', 'newPasswordValidation'],
-        ];*/
+        ];
     }
 
     /**
@@ -222,6 +240,33 @@ class User extends BaseUser implements IdentityInterface
         return $this->hasMany(Task::class, ['performer_id' => 'id']);
     }
 
+    public function getTasksByStatus($status)
+    {
+        $query = Task::find();
+        $query->joinWith('performer p')->joinWith('client c');
+
+        switch ($status) {
+            case 'new':
+                $query->where(['status_id' => Status::STATUS_NEW]);
+                break;
+            case 'close':
+                $query->where(['status_id' => [Status::STATUS_COMPLETE, Status::STATUS_FAIL, Status::STATUS_CANCEL]]);
+                break;
+            case 'in_progress':
+                $query->where(['status_id' => Status::STATUS_IN_PROGRESS]);
+                break;
+            case 'expired':
+                $query->where(['status_id' => Status::STATUS_IN_PROGRESS])
+                    ->andWhere(['<', 'expire_dt', date('Y-m-d')]);
+                break;
+        }
+
+        $tb = $this->is_contractor ? 'p' : 'c';
+        $query->andWhere("$tb.id = :user_id", [':user_id' => $this->id]);
+
+        return $query;
+    }
+
     /**
      * Gets query for [[Categories]].
      *
@@ -245,5 +290,31 @@ class User extends BaseUser implements IdentityInterface
     public function increaseFailCount()
     {
         $this->updateCounters(['fail_count' => 1]);
+    }
+
+    public function beforeSave($insert)
+    {
+        parent::beforeSave($insert);
+
+        if ($this->avatarFile) {
+            $newname = uniqid() . '.' . $this->avatarFile->getExtension();
+            $path = '/uploads/' . $newname;
+
+            $this->avatarFile->saveAs('@webroot/uploads/' . $newname);
+            $this->avatar = $path;
+        }
+
+        if ($this->new_password) {
+            $this->setPassword($this->new_password);
+        }
+
+        return true;
+    }
+
+    public function newPasswordValidation($attribute, $params)
+    {
+        if (!$this->validatePassword($this->$attribute)) {
+            $this->addError($attribute, 'Указан неверный старый пароль');
+        }
     }
 }

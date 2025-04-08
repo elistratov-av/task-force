@@ -4,87 +4,45 @@
  * @var Task $task
  * @var View $this
  * @var Category[] $categories
+ * @var Pagination $pages
  */
 
 use app\models\Category;
 use app\models\Task;
-use yii\helpers\BaseStringHelper;
+use yii\data\Pagination;
 use yii\helpers\Html;
-use yii\helpers\Url;
 use yii\web\View;
 use yii\widgets\ActiveForm;
+use yii\widgets\LinkPager;
 
 $this->title = 'Просмотр новых заданий';
 ?>
 <div class="left-column">
+    <?php
+/*    echo '@yii: ' . Yii::getAlias('@yii') .'<br>';
+    echo '@app: ' . Yii::getAlias('@app') .'<br>';
+    echo '@runtime: ' . Yii::getAlias('@runtime') .'<br>';
+    echo '@vendor: ' . Yii::getAlias('@vendor') .'<br>';
+    echo '@webroot: ' . Yii::getAlias('@webroot') .'<br>';
+    echo '@web: ' . Yii::getAlias('@web') .'<br>';
+    */?>
     <h3 class="head-main head-task">Новые задания</h3>
     <?php foreach ($models as $model): ?>
-    <div class="task-card">
-        <div class="header-task">
-            <a  href="<?= Url::toRoute(['tasks/view', 'id' => $model->id]) ?>" class="link link--block link--big"><?= Html::encode($model->name) ?></a>
-            <p class="price price--task"><?= $model->budget ?></p>
-        </div>
-        <p class="info-text"><?= Yii::$app->formatter->asRelativeTime($model->dt_add) ?></p>
-        <p class="task-text"><?= Html::encode(BaseStringHelper::truncate($model->description, 200)) ?></p>
-        <div class="footer-task">
-            <?php if ($model->location): ?>
-            <p class="info-text town-text"><?= $model->location ?></p>
-            <?php endif; ?>
-            <p class="info-text category-text"><?= $model->category->name ?></p>
-            <a href="<?= Url::toRoute(['tasks/view', 'id' => $model->id]) ?>" class="button button--black">Смотреть Задание</a>
-        </div>
-    </div>
+        <?= $this->render('//partials/_task', ['model' => $model]) ?>
     <?php endforeach; ?>
-    <!--<div class="task-card">
-        <div class="header-task">
-            <a  href="#" class="link link--block link--big">Убраться в квартире после вписки</a>
-            <p class="price price--task">4700 ₽</p>
-        </div>
-        <p class="info-text"><span class="current-time">4 часа </span>назад</p>
-        <p class="task-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas varius tortor nibh, sit amet tempor
-            nibh finibus et. Aenean eu enim justo. Vestibulum aliquam hendrerit molestie. Mauris malesuada nisi sit amet augue accumsan tincidunt.
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas varius tortor nibh, sit amet tempor
-            nibh finibus et. Aenean eu enim justo. Vestibulum aliquam hendrerit molestie. Mauris malesuada nisi sit amet augue accumsan tincidunt.
-        </p>
-        <div class="footer-task">
-            <p class="info-text town-text">Санкт-Петербург, Центральный район</p>
-            <p class="info-text category-text">Переводы</p>
-            <a href="#" class="button button--black">Смотреть Задание</a>
-        </div>
-    </div>
-    <div class="task-card">
-        <div class="header-task">
-            <a  href="#" class="link link--block link--big">Перевезти груз на новое место</a>
-            <p class="price price--task">18750 ₽</p>
-        </div>
-        <p class="info-text"><span class="current-time">4 часа </span>назад</p>
-        <p class="task-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas varius tortor nibh, sit amet tempor
-            nibh finibus et. Aenean eu enim justo. Vestibulum aliquam hendrerit molestie. Mauris malesuada nisi sit amet augue accumsan tincidunt.
-        </p>
-        <div class="footer-task">
-            <p class="info-text town-text">Санкт-Петербург, Центральный район</p>
-            <p class="info-text category-text">Переводы</p>
-            <a href="#" class="button button--black">Смотреть Задание</a>
-        </div>
-    </div>-->
     <div class="pagination-wrapper">
-        <ul class="pagination-list">
-            <li class="pagination-item mark">
-                <a href="#" class="link link--page"></a>
-            </li>
-            <li class="pagination-item">
-                <a href="#" class="link link--page">1</a>
-            </li>
-            <li class="pagination-item pagination-item--active">
-                <a href="#" class="link link--page">2</a>
-            </li>
-            <li class="pagination-item">
-                <a href="#" class="link link--page">3</a>
-            </li>
-            <li class="pagination-item mark">
-                <a href="#" class="link link--page"></a>
-            </li>
-        </ul>
+        <?= LinkPager::widget([
+            'pagination' => $pages,
+            'options' => ['class' => 'pagination-list'],
+            'prevPageCssClass' => 'pagination-item mark',
+            'nextPageCssClass' => 'pagination-item mark',
+            'pageCssClass' => 'pagination-item',
+            'activePageCssClass' => 'pagination-item--active',
+            'linkOptions' => ['class' => 'link link--page'],
+            'nextPageLabel' => '',
+            'prevPageLabel' => '',
+            'maxButtonCount' => 5
+        ]) ?>
     </div>
 </div>
 <div class="right-column">

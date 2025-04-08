@@ -72,9 +72,12 @@ AppAsset::register($this);
                         <li class="menu-item">
                             <a href="<?= Url::toRoute(['user/settings']) ?>" class="link">Настройки</a>
                         </li>
-                        <li class="menu-item">
-                            <a href="#" class="link">Связаться с нами</a>
-                        </li>
+                        <?php if ($user->is_contractor): ?>
+                            <li class="menu-item">
+                                <a href="<?= Url::toRoute(['user/view', 'id' => $user->getId()]); ?>" class="link">Мой
+                                    профиль</a>
+                            </li>
+                        <?php endif ?>
                         <li class="menu-item">
                             <a href="<?= Url::toRoute(['auth/logout']) ?>" class="link">Выход из системы</a>
                         </li>

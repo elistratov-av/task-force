@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\helpers\UIHelper;
 use app\models\Category;
 use app\models\File;
 use app\models\Opinion;
@@ -10,6 +11,7 @@ use app\models\Task;
 use app\logic\actions\CancelAction;
 use app\logic\actions\DenyAction;
 use Yii;
+use yii\data\Pagination;
 use yii\web\NotFoundHttpException;
 use Yii\web\Response;
 use yii\web\UploadedFile;
@@ -23,9 +25,11 @@ class TasksController extends SecuredController
 
         $tasksQuery = $task->getSearchQuery();
         $categories = Category::find()->all();
-        $tasks = $tasksQuery->all();
+        $countQuery = clone $tasksQuery;
+        $pages = new Pagination(['totalCount' => $countQuery->count(), 'pageSize' => 5]);
+        $models = $tasksQuery->offset($pages->offset)->limit($pages->limit)->all();
 
-        return $this->render('index', ['models' => $tasks, 'task' => $task, 'categories' => $categories]);
+        return $this->render('index', ['models' => $models, 'pages' => $pages, 'task' => $task, 'categories' => $categories]);
     }
 
     /**
@@ -41,6 +45,19 @@ class TasksController extends SecuredController
         $opinion = new Opinion;
 
         return $this->render('view', ['model' => $task, 'newReply' => $reply, 'opinion' => $opinion]);
+    }
+
+    public function actionMy($status = null)
+    {
+        $menuItems = UIHelper::getMyTasksMenu($this->getUser()->is_contractor);
+
+        if (!$status) {
+            $this->redirect($menuItems[0]['url']);
+        }
+
+        $tasks = $this->getUser()->getTasksByStatus($status)->all();
+
+        return $this->render('my', ['menuItems' => $menuItems, 'tasks' => $tasks]);
     }
 
     public function actionCreate()

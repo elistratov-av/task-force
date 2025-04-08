@@ -31,6 +31,8 @@ use yii\web\IdentityInterface;
  * @property File[] $files
  * @property Reply[] $replies
  * @property Status $status
+ * @property User $performer
+ * @property User $client
  * @property City $city
  */
 class Task extends \yii\db\ActiveRecord

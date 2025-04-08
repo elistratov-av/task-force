@@ -33,15 +33,6 @@ $this->title = 'Профиль пользователя';
                         <a href="#" class="link link--regular"><?= $category->name ?></a>
                     </li>
                 <?php endforeach; ?>
-                <li class="special-item">
-                    <a href="#" class="link link--regular">Ремонт бытовой техники</a>
-                </li>
-                <li class="special-item">
-                    <a href="#" class="link link--regular">Курьер</a>
-                </li>
-                <li class="special-item">
-                    <a href="#" class="link link--regular">Оператор ПК</a>
-                </li>
             </ul>
         </div>
         <div class="bio">
@@ -65,7 +56,7 @@ $this->title = 'Профиль пользователя';
             </div>
         </div>
     <?php endforeach; ?>
-    <div class="response-card">
+    <!--<div class="response-card">
         <img class="customer-photo" src="/img/man-coat.png" width="120" height="127" alt="Фото заказчиков">
         <div class="feedback-wrapper">
             <p class="feedback">«Кумар сделал всё в лучшем виде. Буду обращаться к нему в
@@ -88,7 +79,7 @@ $this->title = 'Профиль пользователя';
             <div class="stars-rating small"><span class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span class="fill-star">&nbsp;</span><span>&nbsp;</span></div>
             <p class="info-text"><span class="current-time">25 минут </span>назад</p>
         </div>
-    </div>
+    </div>-->
 </div>
 <div class="right-column">
     <div class="right-card black">
